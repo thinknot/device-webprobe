@@ -47,6 +47,16 @@ module.exports = function(app) {
 	});
     });
 
+    // TEMPORARY Test Executor EMULATOR - to be replaced by Bob's API
+    app.post('/api/testexecutor', function(req, res) {
+
+	    console.log( "testexecutor: " + req.body.deviceAddr );
+
+	// Just echo the request for now
+	res.send( req.body );
+
+    });
+
     // application -------------------------------------------------------------
     app.get('*', function(req, res) {
 	    res.sendfile('./public/index.html'); // load the single view file (angular will handle the page changes on the front-end)
