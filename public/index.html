@@ -41,9 +41,8 @@
 
     <!-- FORM TO CREATE TESTRUNS -->
     <div id="testrun-form" class="row">
-      <div class="col-sm-8 col-sm-offset-2 text-center">
+      <div class="col-sm-8 col-sm-offset-2 text-center form-group">
 	<form>
-	  <div class="form-group">
 
 	    <!-- BIND THIS VALUE TO formData.xyz IN ANGULAR -->
 	    <table>
@@ -59,12 +58,15 @@
 		<td>Device's IP address</td>
 		<td><input type="text" class="form-control input-lg" ng-model="formData.deviceAddr"></td>
 	      </tr>
+	      <tr>
+		<td></td>
+		<td>
+		  <!-- createTestrun() WILL CREATE NEW TESTRUNS -->
+		  <button type="submit" class="btn btn-primary btn-lg" ng-click="createTestrun()">Run Test</button>
+		</td>
 	    </table>
-	  </div>
 	  
-	  <!-- createTestrun() WILL CREATE NEW TESTRUNS -->
-	  <button type="submit" class="btn btn-primary btn-lg" ng-click="createTestrun()">Run Test</button>
-	</form>
+ 	</form>
       </div>
     </div>
 
