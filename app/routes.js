@@ -1,4 +1,6 @@
 var Testrun = require('./models/testrun');
+var AWS = require('aws-sdk');
+
 
 function getRecords(res){
     Testrun.find(function(err, records) {
@@ -44,6 +46,45 @@ module.exports = function(app) {
 	    if (err)
 		res.send(err);
 	    getRecords(res);
+	});
+    });
+
+    // e-mail sender
+    app.post('/api/emailsender', function(req, res) {
+
+	var ses = new AWS.SES();
+	var message = 'your test has been executed';
+	var params = {
+	    Destination: {
+		ToAddresses: [req.body.userEmail],
+		CcAddresses: [""],
+		BccAddresses: [""]
+	    },
+	    Message: {
+		Body: {
+		    Html: {
+			Data: message,
+			Charset: 'US-ASCII'
+		    },
+		    Text: {
+			Data: message,
+			Charset: 'US-ASCII'
+	            }
+		},
+	        Subject: {
+		    Data: 'subject',
+		    Charset: 'US-ASCII'
+		}
+	    },
+	    Source: 'doug@sunspec.org',
+	    ReplyToAddresses: ['doug@sunspec.org'],
+	    ReturnPath: 'doug@sunspec.org'
+	};
+
+	ses.sendEmail( params, function(err,data) {
+
+		if ( err ) console.log( err );//, err.stack );
+		else console.log( data );
 	});
     });
 

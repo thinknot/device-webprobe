@@ -7,11 +7,12 @@ var database = require('./config/database'); 			// load the database config
 var morgan   = require('morgan');
 var bodyParser = require('body-parser');
 var methodOverride = require('method-override');
+var AWS = require('aws-sdk');                               // AWS SDK for access to SES e-mail client
 
 // configuration ===============================================================
 mongoose.connect(database.url); 	// connect to mongoDB database on modulus.io
 
-app.use(express.static(__dirname + '/public'));		// set the static files location /public/img will be /img for users
+app.use(express.static(__dirname + '/public'));	 // set the static files location /public/img will be /img for users
 app.use(morgan('dev')); // log every request to the console
 app.use(bodyParser.urlencoded({'extended':'true'})); // parse application/x-www-form-urlencoded
 app.use(bodyParser.json()); // parse application/json
