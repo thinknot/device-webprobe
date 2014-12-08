@@ -81,11 +81,14 @@ module.exports = function(app) {
 	    ReturnPath: 'doug@sunspec.org'
 	};
 
+	// Send the e-mail
 	ses.sendEmail( params, function(err,data) {
-
-		if ( err ) console.log( err );//, err.stack );
-		else console.log( data );
+	    if ( err ) console.log( err );//, err.stack );
+	    else console.log( data );
 	});
+
+	// Not sure what to do here - just reply with request for now
+	res.send( req.body );
     });
 
     // TEMPORARY Test Executor EMULATOR - to be replaced by Bob's API
