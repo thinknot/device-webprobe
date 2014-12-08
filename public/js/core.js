@@ -1,1 +1,2 @@
-angular.module('testrun', ['testrunController', 'testrunService', 'testexecutorService']);
+angular.module('testrun', ['testrunController', 'testrunService', 
+			   'testexecutorService', 'sendemailService' ]);

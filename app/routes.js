@@ -1,4 +1,6 @@
 var Testrun = require('./models/testrun');
+var AWS = require('aws-sdk');
+
 
 function getRecords(res){
     Testrun.find(function(err, records) {
@@ -45,6 +47,48 @@ module.exports = function(app) {
 		res.send(err);
 	    getRecords(res);
 	});
+    });
+
+    // e-mail sender
+    app.post('/api/emailsender', function(req, res) {
+
+	var ses = new AWS.SES();
+	var message = 'your test has been executed';
+	var params = {
+	    Destination: {
+		ToAddresses: [req.body.userEmail],
+		CcAddresses: [""],
+		BccAddresses: [""]
+	    },
+	    Message: {
+		Body: {
+		    Html: {
+			Data: message,
+			Charset: 'US-ASCII'
+		    },
+		    Text: {
+			Data: message,
+			Charset: 'US-ASCII'
+	            }
+		},
+	        Subject: {
+		    Data: 'subject',
+		    Charset: 'US-ASCII'
+		}
+	    },
+	    Source: 'doug@sunspec.org',
+	    ReplyToAddresses: ['doug@sunspec.org'],
+	    ReturnPath: 'doug@sunspec.org'
+	};
+
+	// Send the e-mail
+	ses.sendEmail( params, function(err,data) {
+	    if ( err ) console.log( err );//, err.stack );
+	    else console.log( data );
+	});
+
+	// Not sure what to do here - just reply with request for now
+	res.send( req.body );
     });
 
     // TEMPORARY Test Executor EMULATOR - to be replaced by Bob's API
