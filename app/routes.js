@@ -1,6 +1,6 @@
 var Testrun = require('./models/testrun');
 var AWS = require('aws-sdk');
-
+AWS.config.region = 'us-west-2';
 
 function getRecords(res){
     Testrun.find(function(err, records) {
@@ -57,8 +57,8 @@ module.exports = function(app) {
 	var params = {
 	    Destination: {
 		ToAddresses: [req.body.userEmail],
-		CcAddresses: [""],
-		BccAddresses: [""]
+		CcAddresses: [],
+		BccAddresses: []
 	    },
 	    Message: {
 		Body: {
@@ -83,7 +83,7 @@ module.exports = function(app) {
 
 	// Send the e-mail
 	ses.sendEmail( params, function(err,data) {
-	    if ( err ) console.log( err );//, err.stack );
+	    if ( err ) console.log( err, err.stack );
 	    else console.log( data );
 	});
 
