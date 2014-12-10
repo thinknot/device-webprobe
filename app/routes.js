@@ -1,6 +1,7 @@
 var Testrun = require('./models/testrun');
 var AWS = require('aws-sdk');
 AWS.config.region = 'us-west-2';
+var Http = require('http');
 
 function getRecords(res){
     Testrun.find(function(err, records) {
@@ -49,6 +50,21 @@ module.exports = function(app) {
 	});
     });
 
+    // Test Executor - calls Bob's test API
+    app.post('/api/testexecutor', function(req, res) {
+
+        console.log( "testexecutor: " + req.body.deviceAddr );
+
+        return Http.get("http://localhost:8083/device", function(res) {
+		console.log("Got response: " + res.statusCode);
+		res.on("data", function(chunk) {
+			console.log("body: " + chunk);
+		});
+	    }).on('error', function(e) {
+		    console.log("got error: " + e.message);
+	});
+    });
+
     // e-mail sender
     app.post('/api/emailsender', function(req, res) {
 
@@ -88,17 +104,7 @@ module.exports = function(app) {
 	});
 
 	// Not sure what to do here - just reply with request for now
-	res.send( req.body );
-    });
-
-    // TEMPORARY Test Executor EMULATOR - to be replaced by Bob's API
-    app.post('/api/testexecutor', function(req, res) {
-
-	    console.log( "testexecutor: " + req.body.deviceAddr );
-
-	// Just echo the request for now
-	res.send( req.body );
-
+	res.send(  );
     });
 
     // application -------------------------------------------------------------

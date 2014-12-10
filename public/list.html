@@ -36,41 +36,38 @@
 <body ng-controller="mainController">
   <div class="container">
 
-    <!-- FORM TO CREATE TESTRUNS -->
-    <div id="testrun-form" class="row">
-      <div class="col-sm-8 col-sm-offset-2 text-center form-group">
-	<form>
+    <!-- HEADER AND COUNT -->
+    <div class="text-center">
+    <h3>Total Runs: ({{ testruns.length }})</h3>
+    </div>
 
-	    <!-- BIND THIS VALUE TO formData.xyz IN ANGULAR -->
-	    <table>
-	      <tr>
-		<td>Your Name</td>
-		<td><input type="text" class="form-control input-lg" ng-model="formData.userName"></td>
-	      </tr>
-	      <tr>
-		<td>E-Mail Address</td>
-		<td><input type="text" class="form-control input-lg" ng-model="formData.userEmail"></td>
-	      </tr>
-	      <tr>
-		<td>Device's IP address</td>
-		<td><input type="text" class="form-control input-lg" ng-model="formData.deviceAddr" ng-model="formData.ipaddr"></td>
-	      </tr>
-	      <tr>
-		<td></td>
-		<td>
-		  <!-- createTestrun() WILL CREATE NEW TESTRUNS -->
-		  <button type="submit" class="btn btn-primary btn-lg" ng-click="createTestrun()">Run Test</button>
-		</td>
-	    </table>
-	  
- 	</form>
+    <!-- TESTRUN LIST -->
+    <div id="testrun-list" class="row">
+      <div class="col-sm-4 col-sm-offset-4">
+
+	<table class="table table-striped table-bordered">
+	  <tr>
+	    <th>Name</th><th>E-mail</th><th>Device</th><th>Time Started</th><th>Results</th>
+	  </tr>
+	<!-- LOOP OVER THE ITEMS IN $scope.testruns -->
+	<tr ng-repeat="testrun in testruns">
+	    <td>{{ testrun.userName }}</td>
+	    <td>{{ testrun.userEmail }}</td>
+	    <td>{{ testrun.deviceAddr }}</td>
+	    <td>{{ testrun.testStartTime }}</td>
+	    <td><a href="{{ testrun.resultsLink }}">link</td>
+	    <td><button type="submit" class="btn btn-sm" ng-click="deleteTestrun(testrun._id)">Delete</button></td>
+	  </tr>
+	</table>
+	
+	<p class="text-center" ng-show="loading">
+	  <span class="fa fa-spinner fa-spin fa-3x"></span>
+	</p>
       </div>
     </div>
 
-<hr>
-    
     <div class="text-center text-muted">
-      <h3><a href="list.html">List Previous Test Runs ({{ testruns.length }})</a></h3>
+      <p><a href="index.html">Run A Test</a></p>
       <p><a href="http://www.sunspec.org">SunSpec</a></p>
     </div>
     
