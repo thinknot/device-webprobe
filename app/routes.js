@@ -55,7 +55,8 @@ module.exports = function(app) {
 
         console.log( "testexecutor: " + req.body.deviceAddr );
 
-        return Http.get("http://localhost:8083/device", function(res) {
+        return Http.get("http://localhost:8083/device?ipaddr="+req.body.deviceAddr, 
+			function(res) {
 		console.log("Got response: " + res.statusCode);
 		res.on("data", function(chunk) {
 			console.log("body: " + chunk);
