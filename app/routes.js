@@ -21,7 +21,8 @@ module.exports = function(app) {
 	getRecords(res);
     });
 
-    // create a testrun and send back all testruns after creation
+    // Create a testrun database record, and send back all testruns after creation
+    // Used by the 'show all previous runs' webpage 
     app.post('/api/testruns', function(req, res) {
 
 	// create a record, information comes from AJAX request from Angular
@@ -50,10 +51,11 @@ module.exports = function(app) {
 	});
     });
 
-    // Test Executor - calls Bob's test API
+    // Test Executor - run a test by calling Bob's test API
+    // Return the result as a [ tbd ]
     app.post('/api/testexecutor', function(req, res) {
 
-        console.log( "testexecutor: " + req.body.deviceAddr );
+        console.log( "\r\ntestexecutor: " + req.body.deviceAddr );
 
         return Http.get("http://localhost:8083/device?ipaddr="+req.body.deviceAddr, 
 			function(res) {
