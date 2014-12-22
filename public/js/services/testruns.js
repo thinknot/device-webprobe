@@ -1,6 +1,5 @@
 angular.module('testrunService', [])
 
-	// super simple service
 	// each function returns a promise object 
 	.factory('Testruns', ['$http',function($http) {
 		return {

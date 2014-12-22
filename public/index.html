@@ -8,7 +8,7 @@
     <!-- Optimize mobile viewport -->
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>Node/Angular Testrun App</title>
+    <title>SunSpec Testrun</title>
 
     <!-- SCROLLS -->
     <!-- load bootstrap -->
@@ -25,9 +25,9 @@
     <!-- load angular -->
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular.min.js"></script>
 
-    <script src="js/controllers/main.js"></script> <!-- load up our controller -->
+    <script src="js/controllers/main.js"></script> <!-- load our controller -->
     <script src="js/services/testruns.js"></script> <!-- load our testrun service -->
-    <script src="js/services/testexecutor.js"></script> <!-- test executor emulator service -->
+    <script src="js/services/testexecutor.js"></script> <!-- test executor service -->
     <script src="js/services/sendemail.js"></script> <!-- email sender service -->
     <script src="js/core.js"></script> <!-- load our main application -->
 
@@ -40,7 +40,6 @@
     <div id="testrun-form" class="row">
       <div class="col-sm-8 col-sm-offset-2 text-center form-group">
 	<form>
-
 	    <!-- BIND THIS VALUE TO formData.xyz IN ANGULAR -->
 	    <table>
 	      <tr>
@@ -62,11 +61,11 @@
 		  <button type="submit" class="btn btn-primary btn-lg" ng-click="createTestrun()">Run Test</button>
 		</td>
 	    </table>
-	  
  	</form>
       </div>
     </div>
 
+    {{ status }}.{{ statusDetail }} {{ result }} 
 <hr>
     
     <div class="text-center text-muted">

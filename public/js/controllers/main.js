@@ -1,11 +1,11 @@
 angular.module('testrunController', [])
 
-    // inject the Testrun service factory into our controller
+    // inject all service factories into our controller
     .controller('mainController', ['$scope','$http','Testruns','TestExecutor', 'EmailSender', 
 				   function($scope, $http, Testruns, TestExecutor, EmailSender ) {
 
-	     $scope.formData = {};
-	     $scope.loading = true;
+        $scope.formData = {};
+	$scope.loading = true;
 
 		// GET =====================================================================
 		// when landing on the page, display all testruns
@@ -29,10 +29,16 @@ angular.module('testrunController', [])
 			.success(function(data) {
 
 			    // The test executed and returned a result 
+				$scope.status = data.status;
+				$scope.statusDetail = data.statusDetail;
+				$scope.result = data.result;
+				//				if (data.status != 'SUCCESS') {
 
-			    // e-mail the result
-			    EmailSender.create($scope.formData)
-			    .success(function(data) {
+				//				    window.alert( data.statusDetail );
+
+				//				} else {
+
+				//				window.alert( 'SUCCESS' );
 
 				// now create the database record (returns a promise object)
 				Testruns.create($scope.formData)
@@ -43,7 +49,7 @@ angular.module('testrunController', [])
 		    	    	    $scope.formData = {}; // clear the form so our user is ready to enter another
 		    	            $scope.testruns = data; // assign our new list of testruns
 				});
-			    });
+				//				}
 			});
 		    }
 		}
