@@ -65,7 +65,9 @@
       </div>
     </div>
 
-    {{ status }}.{{ statusDetail }} {{ result }} 
+<div ng-show="status != undefined" class="text-center">
+    {{ status }}:&nbsp{{ statusDetail }}
+</div>
 <hr>
     
     <div class="text-center text-muted">
