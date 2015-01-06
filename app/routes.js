@@ -64,7 +64,6 @@ module.exports = function(app) {
     });
 
     // Create a testrun database record, and send back all testruns after creation
-    // Used by the 'show all previous runs' webpage 
     app.post('/api/testruns', function(req, res) {
 
 	// create a record, information comes from AJAX request from Angular
@@ -101,6 +100,7 @@ module.exports = function(app) {
 
             console.log( "\r\ntestexecutor: " + 
 			 req.body.userName + " " +
+			 req.body.deliveryMethod + " " +
 			 req.body.userEmail + " " +
 			 req.body.deviceAddr );
 
@@ -118,17 +118,23 @@ module.exports = function(app) {
 			    var statusEndIndex = resultIndex-2;
 			    var statusJson = str.slice(0,statusEndIndex)+'}';
 			    var reply = JSON.parse(statusJson);
+
 			    var content = str.slice(resultIndex+10,str.length-2);
 
-			    console.log("status: "+reply.status+" detail: " + reply.statusDetail);
+			    if ( req.body.deliveryMethod == "download" ) {
+				
+				// do nothing extra - link is already in the reply (???is this true???)
 
-			    var subject = reply.status;
-			    if (reply.statusDetail != undefined)
-				subject += " "+reply.statusDetail;
+			    } else if ( req.body.deliveryMethod == "mail" ) {
 
-			    sendEmail(req.body.userEmail,
-				      "SunSpec test "+subject,
-				      content);
+			        var subject = reply.status;
+				if (reply.statusDetail != undefined)
+				    subject += " "+reply.statusDetail;
+
+				sendEmail(req.body.userEmail,
+					  "SunSpec test "+subject,
+					  content);
+			    }
 
 			    res.json(reply);
 		        });

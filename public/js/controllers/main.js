@@ -32,13 +32,11 @@ angular.module('testrunController', [])
 				$scope.status = data.status;
 				$scope.statusDetail = data.statusDetail;
 				$scope.result = data.result;
-				//				if (data.status != 'SUCCESS') {
-
-				//				    window.alert( data.statusDetail );
-
-				//				} else {
-
-				//				window.alert( 'SUCCESS' );
+				if (data.status != 'SUCCESS') {
+				    window.alert( data.statusDetail );
+				} else {
+				    window.alert( 'SUCCESS' );
+				}
 
 				// now create the database record (returns a promise object)
 				Testruns.create($scope.formData)
