@@ -16,10 +16,13 @@ angular.module('testrunController', [])
 			});
 
 		// CREATE ==================================================================
-		// when submitting the add form, run the test, e-mail the result, and create a database record
+		// User pressed 'Run Test' button
+		// Call the test executor to execute the test, and if it succeeds,
+		// a) reate a tracking db entry, 
+		// b) dispose of the result using the method specified by the user
 		$scope.createTestrun = function() {
 
-                    // Validate the formData to make sure that something is there
+                    // Validate the formData
 		    // The only required parameter is the device's address
 		    if ($scope.formData.deviceAddr != undefined) {
 		    	$scope.loading = true;
@@ -29,25 +32,29 @@ angular.module('testrunController', [])
 			.success(function(data) {
 
 			    // The test executed and returned a result 
-				$scope.status = data.status;
-				$scope.statusDetail = data.statusDetail;
-				$scope.result = data.result;
-				if (data.status != 'SUCCESS') {
-				    window.alert( data.statusDetail );
-				} else {
-				    window.alert( 'SUCCESS' );
-				}
+			    $scope.status = data.status;
+			    $scope.statusDetail = data.statusDetail;
+			    $scope.result = data.result;
+			    if (data.status == 'FAILURE') {
+				window.alert( data.statusDetail );
+			    } else if ( data.status != 'SUCCESS' ) {
+				window.alert( 'unknown reply from text executor: '+data.status );
+			    } else {
+
+				// Test succeeded - 
+
+				// save url to retrieve result
+				$scope.resultsLink = data.result;
 
 				// now create the database record (returns a promise object)
 				Testruns.create($scope.formData)
-
-				// if successful creation, call our get function to get all the new testruns
 				.success(function(data) {
+				    // db record successfully created - dispose of the result
+
 				    $scope.loading = false;
-		    	    	    $scope.formData = {}; // clear the form so our user is ready to enter another
-		    	            $scope.testruns = data; // assign our new list of testruns
+				    $scope.formData = {}; // clear the form so our user is ready to enter another
 				});
-				//				}
+			    }
 			});
 		    }
 		}

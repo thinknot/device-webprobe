@@ -14,6 +14,29 @@ function getRecords(res){
     });
 };
 
+// Retrieve and return or e-mail test results
+function getResults(req,res,reply) {
+
+    if ( req.body.deliveryMethod == "download" ) {
+				
+//				res.setHeader( 'content-type','application/octet-stream');
+				// do nothing extra - link is already in the reply (???is this true???)
+
+    } else if ( req.body.deliveryMethod == "mail" ) {
+
+        var subject = reply.status;
+	if (reply.statusDetail != undefined)
+	    subject += " "+reply.statusDetail;
+
+	//	var content = reply.slice(resultIndex+10,str.length-2);
+	sendEmail(req.body.userEmail,
+		  "SunSpec test "+subject,
+		  "HI MOM");
+    }
+
+    res.json(reply);
+}
+
 
 // e-mail sender
 function sendEmail(dest,subject,message) {
@@ -72,6 +95,7 @@ module.exports = function(app) {
 	    userEmail : req.body.userEmail,
 	    userMemberId : req.body.userMemberId,
 	    deviceAddr : req.body.deviceAddr,
+	    resultsLink : req.body.resultsLink,
 	    testStartTime : new Date()
 	}, function(err, record) {
 	    if (err)
@@ -81,7 +105,7 @@ module.exports = function(app) {
 	});
     });
 
-    // delete a testrun
+    // delete a testrun database record
     app.delete('/api/testruns/:testrun_id', function(req, res) {
 	Testrun.remove({
 	    _id : req.params.testrun_id
@@ -94,60 +118,44 @@ module.exports = function(app) {
 
     // Test Executor - run a test by calling Bob's test API
     // Return the result as a [ tbd ]
-    app.post('/api/testexecutor', 
-        
-        function(req, res) {
+    app.post('/api/testexecutor', function(req, res) {
 
-            console.log( "\r\ntestexecutor: " + 
-			 req.body.userName + " " +
-			 req.body.deliveryMethod + " " +
-			 req.body.userEmail + " " +
-			 req.body.deviceAddr );
+        console.log( "\r\ntestexecutor: " + 
+		     req.body.userName + " " +
+		     req.body.deliveryMethod + " " +
+		     req.body.userEmail + " " +
+		     req.body.deviceAddr );
 
-            Http.get("http://localhost:8083/device?ipaddr="+req.body.deviceAddr, 
-	
-		function(res2) {
+	Http.get("http://localhost:8083/device?ipaddr="+req.body.deviceAddr, function(res2) {
 
-		    res2.on("data", 
+	    res2.on("data", function(chunk) {
 
-		        function(chunk) {
+		// TEMP until Bob's service returns pure JSON 
+		var str = chunk.toString();    // UTF-8
+			    
+		var resultIndex = str.search("result");
+		var statusEndIndex = resultIndex-2;
+		var replyStr = str.slice(0,statusEndIndex)+',\"result\":\"' + '/home/doug/file.xlsx\"}';
+		var reply = JSON.parse(replyStr);
 
-			    var str = chunk.toString();    // UTF-8
+		console.log( replyStr );
+		// END TEMP
 
-			    var resultIndex = str.search("result");
-			    var statusEndIndex = resultIndex-2;
-			    var statusJson = str.slice(0,statusEndIndex)+'}';
-			    var reply = JSON.parse(statusJson);
-
-			    var content = str.slice(resultIndex+10,str.length-2);
-
-			    if ( req.body.deliveryMethod == "download" ) {
-				
-				// do nothing extra - link is already in the reply (???is this true???)
-
-			    } else if ( req.body.deliveryMethod == "mail" ) {
-
-			        var subject = reply.status;
-				if (reply.statusDetail != undefined)
-				    subject += " "+reply.statusDetail;
-
-				sendEmail(req.body.userEmail,
-					  "SunSpec test "+subject,
-					  content);
-			    }
-
-			    res.json(reply);
-		        });
-
-	        }).on('error', function(e) {
-		    console.log("got error: " + e.message);
-	        });
+		if ( reply.status != 'SUCCESS' )
+		    res.json(reply);
+		else
+		    getResults(req,res,reply);
         });
+
+	}).on('error', function(e) {
+	    console.log("got error: " + e.message);
+        });
+    });
 
     // e-mail sender
     app.post('/api/emailsender', function(req, res) {
 
-	    sendEmail(req.body.userEmail,'try this','HI MOM');
+	sendEmail(req.body.userEmail,'try this','HI MOM');
 
 	// Not sure what to do here - or what this does ~
 	res.send();
@@ -155,6 +163,10 @@ module.exports = function(app) {
 
     // application -------------------------------------------------------------
     app.get('*', function(req, res) {
-	    res.sendfile('./public/index.html'); // load the single view file (angular will handle the page changes on the front-end)
+	// load the single view file (angular will handle the page changes on the front-end)
+        res.sendfile('./public/index.html'); 
     });
 };
+
+
+

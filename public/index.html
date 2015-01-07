@@ -55,7 +55,7 @@
 		<td></td
 	      </tr>
 	      <tr>
-		<td><input checked type="radio" name="delivery" value="download" ng-model="formData.deliveryMethod"> Download Result</td>
+		<td><input type="radio" name="delivery" value="download" ng-model="formData.deliveryMethod" ng-checked="checked"> Download Result</td>
 		<td></td>
 	      </tr>
 	      <tr>
@@ -69,7 +69,6 @@
 	      <tr>
 		<td></td>
 		<td>
-		  <!-- createTestrun() WILL CREATE NEW TESTRUNS -->
 		  <button type="submit" class="btn btn-primary btn-lg" ng-click="createTestrun()">Run Test</button>
 		</td>
 	    </table>
@@ -77,10 +76,13 @@
       </div>
     </div>
 
-<div ng-show="status != undefined" class="text-center">
-    {{ status }}<div ng-show="statusDetail != undefined">{{ statusDetail }}</div>
-</div>
-<hr>
+    <div ng-show="status != undefined" class="text-center">
+      {{ status }}
+      <div ng-show="statusDetail != undefined">{{ statusDetail }}</div>
+      <div ng-show="resultsLink != undefined"><a href={{ resultsLink }}>Retrieve Result</a>
+    </div>
+
+    <hr>
     
     <div class="text-center text-muted">
       <h3><a href="list.html">List Previous Test Runs ({{ testruns.length }})</a></h3>
