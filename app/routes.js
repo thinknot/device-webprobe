@@ -3,7 +3,6 @@ var AWS = require('aws-sdk');
 AWS.config.region = 'us-west-2';
 var Http = require('http');
 
-
 // Retrieve all test db entries
 function getRecords(res){
     Testrun.find(function(err, records) {
@@ -15,12 +14,14 @@ function getRecords(res){
 };
 
 // Retrieve and return or e-mail test results
+// req is the original request from the user
+// res is the response we are building for the user
+// reply is the response we got from the text executor web service
 function getResults(req,res,reply) {
 
     if ( req.body.deliveryMethod == "download" ) {
 				
-//				res.setHeader( 'content-type','application/octet-stream');
-				// do nothing extra - link is already in the reply (???is this true???)
+	// do nothing extra - link is already in the reply (???is this true???)
 
     } else if ( req.body.deliveryMethod == "mail" ) {
 
@@ -32,6 +33,9 @@ function getResults(req,res,reply) {
 	sendEmail(req.body.userEmail,
 		  "SunSpec test "+subject,
 		  "HI MOM");
+
+	// Don't display 'retrieve results' link
+	reply.result = undefined;
     }
 
     res.json(reply);
@@ -135,7 +139,7 @@ module.exports = function(app) {
 			    
 		var resultIndex = str.search("result");
 		var statusEndIndex = resultIndex-2;
-		var replyStr = str.slice(0,statusEndIndex)+',\"result\":\"' + '/home/doug/file.xlsx\"}';
+		var replyStr = str.slice(0,statusEndIndex)+',\"result\":\"' + 'results/picstemplate.csv\"}';
 		var reply = JSON.parse(replyStr);
 
 		console.log( replyStr );
@@ -161,11 +165,19 @@ module.exports = function(app) {
 	res.send();
     });
 
+    app.get('/results/*', function(req, res) {
+
+	console.log("results got req:" + req.url);
+        res.sendfile('./results/picstemplate.csv'); 
+    });
+
     // application -------------------------------------------------------------
     app.get('*', function(req, res) {
+	console.log("* got req:" + req.url);
 	// load the single view file (angular will handle the page changes on the front-end)
         res.sendfile('./public/index.html'); 
     });
+
 };
 
 

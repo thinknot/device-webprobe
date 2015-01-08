@@ -77,9 +77,12 @@
     </div>
 
     <div ng-show="status != undefined" class="text-center">
-      {{ status }}
+      <h2>{{ status }}</h2>
       <div ng-show="statusDetail != undefined">{{ statusDetail }}</div>
-      <div ng-show="resultsLink != undefined"><a href={{ resultsLink }}>Retrieve Result</a>
+      <div ng-show="status == 'SUCCESS'">
+	<div ng-show="resultsLink != undefined"><a href="{{ resultsLink }}">Retrieve Result</a></div>
+	<div ng-hide="resultsLink != undefined">Results e-mailed</div>
+      </div>
     </div>
 
     <hr>
