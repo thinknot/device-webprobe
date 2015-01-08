@@ -77,45 +77,6 @@ function sendEmail(dest,subject,reply) {
     });
 }
 
-// e-mail sender - text only
-function sendEmailXXX(dest,subject,message) {
-
-    var ses = new AWS.SES();
-    var params = {
-	Destination: {
-	    ToAddresses: [dest],
-	    CcAddresses: [],
-	    BccAddresses: []
-	},
-	Message: {
-	    Body: {
-	        Html: {
-	            Data: message,
-		    Charset: 'UTF-8'
-		},
-		Text: {
-		    Data: message,
-		    Charset: 'UTF-8'
-	        }
-	    },
-	    Subject: {
-	        Data: subject,
-	        Charset: 'UTF-8'
-	    }
-	},
-	Source: 'doug@sunspec.org',
-	ReplyToAddresses: ['doug@sunspec.org'],
-	ReturnPath: 'doug@sunspec.org'
-    };
-
-    // Send the e-mail
-    ses.sendEmail( params, function(err,data) {
-	if ( err ) console.log( err, err.stack );
-	else console.log( data );
-    });
-
-};
-
 module.exports = function(app) {
 
     // api ---------------------------------------------------------------------
@@ -158,12 +119,6 @@ module.exports = function(app) {
     // Test Executor - run a test by calling Bob's test API
     // Return the result as a [ tbd ]
     app.post('/api/testexecutor', function(req, res) {
-
-        console.log( "\r\ntestexecutor: " + 
-		     req.body.userName + " " +
-		     req.body.deliveryMethod + " " +
-		     req.body.userEmail + " " +
-		     req.body.deviceAddr );
 
 	Http.get("http://localhost:8083/device?ipaddr="+req.body.deviceAddr, function(res2) {
 
