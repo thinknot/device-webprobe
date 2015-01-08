@@ -2,6 +2,7 @@ var Testrun = require('./models/testrun');
 var AWS = require('aws-sdk');
 AWS.config.region = 'us-west-2';
 var Http = require('http');
+var MailComposer = require("mailcomposer").MailComposer;
 
 // Retrieve all test db entries
 function getRecords(res){
@@ -29,10 +30,9 @@ function getResults(req,res,reply) {
 	if (reply.statusDetail != undefined)
 	    subject += " "+reply.statusDetail;
 
-	//	var content = reply.slice(resultIndex+10,str.length-2);
 	sendEmail(req.body.userEmail,
 		  "SunSpec test "+subject,
-		  "HI MOM");
+		  reply);
 
 	// Don't display 'retrieve results' link
 	reply.result = undefined;
@@ -42,8 +42,43 @@ function getResults(req,res,reply) {
 }
 
 
-// e-mail sender
-function sendEmail(dest,subject,message) {
+// e-mail sender - with binary attachment
+function sendEmail(dest,subject,reply) {
+
+    var mailcomposer = new MailComposer();
+    mailcomposer.setMessageOption( {
+        from: "doug@sunspec.org",
+	to: dest,
+	subject: subject,
+	body:"test result attached"
+	}
+    );
+
+    var attachment = {
+        fileName:reply.result.substring(reply.result.lastIndexOf('/')+1),
+	filePath:reply.result
+    };
+    mailcomposer.addAttachment( attachment );
+    mailcomposer.buildMessage( function(err,message) {
+
+	    var sesParams = {
+	    RawMessage: {
+		Data:message
+	    }
+	}
+
+	// Send the e-mail
+	var ses = new AWS.SES();
+	ses.sendRawEmail( sesParams, function(err,data) {
+		if ( err ) console.log( err, err.stack );
+		//		else console.log( data );
+	});
+
+    });
+}
+
+// e-mail sender - text only
+function sendEmailXXX(dest,subject,message) {
 
     var ses = new AWS.SES();
     var params = {
@@ -139,7 +174,7 @@ module.exports = function(app) {
 			    
 		var resultIndex = str.search("result");
 		var statusEndIndex = resultIndex-2;
-		var replyStr = str.slice(0,statusEndIndex)+',\"result\":\"' + 'results/picstemplate.csv\"}';
+		var replyStr = str.slice(0,statusEndIndex)+',\"result\":\"' + './results/picstemplate.csv\"}';
 		var reply = JSON.parse(replyStr);
 
 		console.log( replyStr );
@@ -154,15 +189,6 @@ module.exports = function(app) {
 	}).on('error', function(e) {
 	    console.log("got error: " + e.message);
         });
-    });
-
-    // e-mail sender
-    app.post('/api/emailsender', function(req, res) {
-
-	sendEmail(req.body.userEmail,'try this','HI MOM');
-
-	// Not sure what to do here - or what this does ~
-	res.send();
     });
 
     app.get('/results/*', function(req, res) {
