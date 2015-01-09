@@ -129,7 +129,7 @@ module.exports = function(app) {
 			    
 		var resultIndex = str.search("result");
 		var statusEndIndex = resultIndex-2;
-		var replyStr = str.slice(0,statusEndIndex)+',\"result\":\"' + '/usr/local/interop-test//results/picstemplate.csv\"}';
+		var replyStr = str.slice(0,statusEndIndex)+',\"result\":\"' + './results/picstemplate.csv\"}';
 		var reply = JSON.parse(replyStr);
 
 		console.log( replyStr );
