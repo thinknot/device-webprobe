@@ -34,9 +34,11 @@ angular.module('testrunController', [])
 			    // The test executed and returned a result 
 			    $scope.status = data.status;
 			    $scope.statusDetail = data.statusDetail;
+			    $scope.Mn = data.Mn;
+			    $scope.Md = data.Md;
 			    $scope.result = data.result;
 			    if (data.status == 'FAILURE') {
-				window.alert( data.statusDetail );
+				//				window.alert( data.statusDetail );
 			    } else if ( data.status != 'SUCCESS' ) {
 				window.alert( 'unknown reply from text executor: '+data.status );
 			    } else {
@@ -51,10 +53,10 @@ angular.module('testrunController', [])
 				.success(function(data) {
 				    // db record successfully created - dispose of the result
 
-				    $scope.loading = false;
-				    $scope.formData = {}; // clear the form so our user is ready to enter another
 				});
 			    }
+			    $scope.loading = false;
+			    $scope.formData = {}; // clear the form so our user is ready to enter another
 			});
 		    }
 		}

@@ -73,17 +73,18 @@
 		</td>
 	    </table>
  	</form>
-      </div>
+        <div ng-show="status != undefined" class="text-center">
+          <h3>{{ status }}</h3>
+          <div ng-show="statusDetail != undefined">{{ statusDetail }}</div>
+          <div ng-show="status == 'SUCCESS'">
+	    Device {{ Mn }}&nbsp{{ Md }} found & read
+            <div ng-show="resultsLink != undefined"><a href="{{ results }}">Retrieve Result</a></div>
+    	    <div ng-hide="resultsLink != undefined">Results e-mailed</div>
+          </div>
+        </div>
     </div>
+  </div>
 
-    <div ng-show="status != undefined" class="text-center">
-      <h2>{{ status }}</h2>
-      <div ng-show="statusDetail != undefined">{{ statusDetail }}</div>
-      <div ng-show="status == 'SUCCESS'">
-	<div ng-show="resultsLink != undefined"><a href="{{ resultsLink }}">Retrieve Result</a></div>
-	<div ng-hide="resultsLink != undefined">Results e-mailed</div>
-      </div>
-    </div>
 
     <hr>
     
