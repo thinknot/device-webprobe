@@ -36,13 +36,15 @@
 <body ng-controller="mainController">
   <div class="container">
 
-    <img src="img/SunSpec.jpg"/>
     <!-- FORM TO CREATE TESTRUNS -->
     <div id="testrun-form" class="row">
       <div class="col-sm-8 col-sm-offset-2 text-center form-group">
 	<form>
 	    <!-- BIND THIS VALUE TO formData.xyz IN ANGULAR -->
 	    <table>
+	      <tr><td></td><td>
+		  <img src="img/SunSpec.jpg"/>
+	      </td></tr>
 	      <tr>
 		<td>Your Name</td>
 		<td><input type="text" class="form-control input-lg" ng-model="formData.userName"></td>
