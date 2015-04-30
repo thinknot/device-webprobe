@@ -124,7 +124,12 @@ module.exports = function(app) {
 
 	    res2.on("data", function(chunk) {
 
-		// TEMP until Bob's service returns pure JSON 
+		var reply = JSON.parse( chunk );
+		console.log( 'status: '+reply.status );
+		console.log( 'statusDetail: '+reply.statusDetail );
+		console.log( 'result:\n'+reply.result );
+
+		    /*		// TEMP until Bob's service returns pure JSON 
 		var str = chunk.toString();    // UTF-8
 			    
 		var resultIndex = str.search("result");
@@ -134,8 +139,7 @@ module.exports = function(app) {
 		    ',\"Md\":\"Simulator\"' +
 		    ',\"result\":\"' +'./results/picstemplate.csv\"}';
 		var reply = JSON.parse(replyStr);
-
-		console.log( replyStr );
+		    */
 		// END TEMP
 
 		if ( reply.status != 'SUCCESS' )

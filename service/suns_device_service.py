@@ -25,7 +25,7 @@ class SunsDeviceService(object):
 
         try:
             if ifc == 'tcp':
-                result += 'IP Address: %s, IP Port: %d, Slave Id: %d, Timeout: %d\n' % (ipaddr, ipport, slaveid, timeout)
+                status_detail += 'IP Address: %s, IP Port: %d, Slave Id: %d, Timeout: %d, ' % (ipaddr, ipport, slaveid, timeout)
                 # sd = client.SunSpecClientDevice(client.TCP, slaveid, ipaddr=ipaddr, ipport=ipport, timeout=timeout)
                 sd = client.SunSpecClientDevice(client.TCP, slaveid, ipaddr=ipaddr, ipport=ipport, timeout=5)
             elif ifc == 'rtu':
@@ -35,9 +35,9 @@ class SunsDeviceService(object):
             else:
                 raise Exception('Invalid ifc param type: %s' % ifc)
 
-            if sd is not None:
-                result += 'Timestamp: %s' % (time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime()))
+            status_detail += 'Timestamp: %s' % (time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime()))
 
+            if sd is not None:
                 # read all models in the device
                 sd.read()
 
@@ -46,7 +46,7 @@ class SunsDeviceService(object):
                         label = '%s (%s)' % (model.model_type.label, str(model.id))
                     else:
                         label = '(%s)' % (str(model.id))
-                    result += '\nmodel: %s\n' % (label)
+                    result += 'model: %s' % (label)
                     for block in model.blocks:
                         if block.index > 0:
                             index = '%02d:' % (block.index)
