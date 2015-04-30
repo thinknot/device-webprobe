@@ -32,7 +32,7 @@ function getResults(req,res,reply) {
 
 	sendEmail(req.body.userEmail,
 		  "SunSpec test "+subject,
-		  reply);
+		  reply.result);
 
 	// Don't display 'retrieve results' link
 	reply.result = undefined;
@@ -128,19 +128,6 @@ module.exports = function(app) {
 		console.log( 'status: '+reply.status );
 		console.log( 'statusDetail: '+reply.statusDetail );
 		console.log( 'result:\n'+reply.result );
-
-		    /*		// TEMP until Bob's service returns pure JSON 
-		var str = chunk.toString();    // UTF-8
-			    
-		var resultIndex = str.search("result");
-		var statusEndIndex = resultIndex-2;
-		var replyStr = str.slice(0,statusEndIndex)+
-		    ',\"Mn\":\"SunSpec\"' +
-		    ',\"Md\":\"Simulator\"' +
-		    ',\"result\":\"' +'./results/picstemplate.csv\"}';
-		var reply = JSON.parse(replyStr);
-		    */
-		// END TEMP
 
 		if ( reply.status != 'SUCCESS' )
 		    res.json(reply);

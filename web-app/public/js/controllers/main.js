@@ -46,7 +46,7 @@ angular.module('testrunController', [])
 				// Test succeeded - 
 
 				// save url to retrieve result
-				$scope.resultsLink = data.result;
+				$scope.results = data.result;
 
 				// now create the database record (returns a promise object)
 				Testruns.create($scope.formData)
