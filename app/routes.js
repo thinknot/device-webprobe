@@ -145,7 +145,12 @@ module.exports = function(app) {
         });
 
 	}).on('error', function(e) {
-	    console.log("got error: " + e.message);
+	    console.log("testexecutor call got error: " + e.message);
+	    var reply = { 
+		status:'FAILURE',
+		statusDetail:'connection to device '+req.body.deviceAddr+' failed: '+e.message
+	    }
+	    res.json(reply);
         });
     });
 

@@ -38,9 +38,9 @@ angular.module('testrunController', [])
 			    $scope.Md = data.Md;
 			    $scope.result = data.result;
 			    if (data.status == 'FAILURE') {
-				//				window.alert( data.statusDetail );
+				window.alert( data.statusDetail );
 			    } else if ( data.status != 'SUCCESS' ) {
-				window.alert( 'unknown reply from text executor: '+data.status );
+				window.alert( 'unknown reply from test executor: '+data );
 			    } else {
 
 				// Test succeeded - 
