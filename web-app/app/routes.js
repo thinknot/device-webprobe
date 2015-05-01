@@ -41,9 +41,7 @@ function disposeResult(req,res,jsonStatus,result) {
 	if (jsonStatus.statusDetail != undefined)
 	    subject += " "+jsonStatus.statusDetail;
 
-	sendEmail(req.body.userEmail,
-		  "SunSpec test "+subject,
-		  result);
+	sendEmail(req.body.userEmail, "SunSpec test "+subject, result);
 
 	// Don't display 'retrieve results' link
 	//	reply.result = undefined;
@@ -54,22 +52,24 @@ function disposeResult(req,res,jsonStatus,result) {
 
 
 // e-mail sender - with binary attachment
-function sendEmail(dest,subject,reply) {
+function sendEmail(dest,subject,result) {
 
     var mailcomposer = new MailComposer();
     mailcomposer.setMessageOption( {
         from: "doug@sunspec.org",
 	to: dest,
 	subject: subject,
-	body:"test result attached"
+	body:result
 	}
     );
 
+    /*
     var attachment = {
-        fileName:reply.result.substring(reply.result.lastIndexOf('/')+1),
-	filePath:reply.result
+        fileName:result.substring(reply.result.lastIndexOf('/')+1),
+	filePath:result
     };
     mailcomposer.addAttachment( attachment );
+    */
     mailcomposer.buildMessage( function(err,message) {
 
 	    var sesParams = {
@@ -135,7 +135,6 @@ module.exports = function(app) {
 
 	    res2.on("data", function(chunk) {
 
-		console.log( 'raw:\r\n'+chunk );
 		var str = chunk.toString();    // UTF-8
 
 		var statusEndIndex = str.search("}");
