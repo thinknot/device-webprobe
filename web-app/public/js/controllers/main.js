@@ -34,11 +34,10 @@ angular.module('testrunController', [])
 			    // The test executed and returned a result 
 			    $scope.status = data.status;
 			    $scope.statusDetail = data.statusDetail;
-			    $scope.Mn = data.Mn;
-			    $scope.Md = data.Md;
-			    $scope.result = data.result;
+			    //			    $scope.Mn = data.Mn;
+			    //			    $scope.Md = data.Md;
 			    if (data.status == 'FAILURE') {
-				window.alert( data.statusDetail );
+				//				window.alert( data.statusDetail );
 			    } else if ( data.status != 'SUCCESS' ) {
 				window.alert( 'unknown reply from test executor: '+data );
 			    } else {
@@ -46,7 +45,7 @@ angular.module('testrunController', [])
 				// Test succeeded - 
 
 				// save url to retrieve result
-				$scope.results = data.result;
+				$scope.resultLink = data.resultLink;
 
 				// now create the database record (returns a promise object)
 				Testruns.create($scope.formData)

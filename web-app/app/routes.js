@@ -3,6 +3,10 @@ var AWS = require('aws-sdk');
 AWS.config.region = 'us-west-2';
 var Http = require('http');
 var MailComposer = require("mailcomposer").MailComposer;
+var fs = require( 'fs' );
+var baseFilePath = '/opt/sunspec/device-webprobe';
+var resultsFilePathComponent = 'results';
+var resultsFilePath = baseFilePath+'/'+resultsFilePathComponent;
 
 // Retrieve all test db entries
 function getRecords(res){
@@ -14,31 +18,38 @@ function getRecords(res){
     });
 };
 
-// Retrieve and return or e-mail test results
+// Save or e-mail test results
 // req is the original request from the user
 // res is the response we are building for the user
-// reply is the response we got from the text executor web service
-function getResults(req,res,reply) {
+// jsonStatus+result is the response we got from the text executor web service
+function disposeResult(req,res,jsonStatus,result) {
 
     if ( req.body.deliveryMethod == "download" ) {
 				
-	// do nothing extra - link is already in the reply (???is this true???)
+	// save the result in a file and append its name to the jsonStatus to be replied
+	var now = new Date();
+	var fileName = resultsFilePath+'/result_'+now;
+
+	var file = fs.openSync( fileName,'w+' );
+	fs.write( file, result );
+
+	jsonStatus.resultLink = resultsFilePathComponent+'/result_'+now;
 
     } else if ( req.body.deliveryMethod == "mail" ) {
 
-        var subject = reply.status;
-	if (reply.statusDetail != undefined)
-	    subject += " "+reply.statusDetail;
+        var subject = jsonStatus.status;
+	if (jsonStatus.statusDetail != undefined)
+	    subject += " "+jsonStatus.statusDetail;
 
 	sendEmail(req.body.userEmail,
 		  "SunSpec test "+subject,
-		  reply.result);
+		  result);
 
 	// Don't display 'retrieve results' link
-	reply.result = undefined;
+	//	reply.result = undefined;
     }
 
-    res.json(reply);
+    return jsonStatus;
 }
 
 
@@ -124,15 +135,25 @@ module.exports = function(app) {
 
 	    res2.on("data", function(chunk) {
 
-		var reply = JSON.parse( chunk );
-		console.log( 'status: '+reply.status );
-		console.log( 'statusDetail: '+reply.statusDetail );
-		console.log( 'result:\n'+reply.result );
+		console.log( 'raw:\r\n'+chunk );
+		var str = chunk.toString();    // UTF-8
 
-		if ( reply.status != 'SUCCESS' )
-		    res.json(reply);
-		else
-		    getResults(req,res,reply);
+		var statusEndIndex = str.search("}");
+		var jsonStatus = JSON.parse( str.slice(0,statusEndIndex+1) );
+		//                   ',\"Mn\":\"SunSpec\"' +
+		//                   ',\"Md\":\"Simulator\"' +
+		//                   ',\"result\":\"' +'./results/picstemplate.csv\"}';
+
+		var result = str.slice( statusEndIndex+11 );
+
+		if ( jsonStatus.status == 'SUCCESS' )
+		    jsonStatus = disposeResult(req,res,jsonStatus,result);
+
+		console.log( 'status: '+jsonStatus.status );
+		console.log( 'statusDetail: '+jsonStatus.statusDetail );
+		console.log( 'resultLink: '+jsonStatus.resultLink );
+
+		res.json(jsonStatus);
         });
 
 	}).on('error', function(e) {
@@ -148,7 +169,7 @@ module.exports = function(app) {
     app.get('/results/*', function(req, res) {
 
 	console.log("results got req:" + req.url);
-        res.sendfile('./results/picstemplate.csv'); 
+        res.sendfile(baseFilePath+req.url);
     });
 
     // application -------------------------------------------------------------
