@@ -6,7 +6,7 @@ There are four components:
 
 2. service - a python script that offers a REST service interface to the underlying...
 
-3. SunSpec core - a set of  pyton scripts that communicate with SunSpec-compliant  devices
+3. SunSpec core - a set of python scripts that communicate with SunSpec-compliant  devices
 
 4. device simulator - a set  of python scripts that simulate a SunSpec device, principally for testing everything else 
 
@@ -38,10 +38,12 @@ server listens on port 8082
 log is in /var/log/interop-test.log
 
 
-ec2-54-70-231-31.us-west-2.compute.amazonaws.com
-------------------------------------------------
+PRODUCTION DEPLOYMENT:
+----------------------
 
-The package is running in production on this server.  It  is managed in these scripts:
+The package is running in production on ec2-54-70-231-31.us-west-2.compute.amazonaws.com.  It is managed in these scripts:
 
 /etc/init.d/...
+
+You can use the script deploy.sh to deploy updates if you check the code out on that server.
 
