@@ -16,6 +16,8 @@ sudo tar -cf - -C service . | tar -xpf - -C /opt/sunspec/device-webprobe/service
 echo "sudo tar -cf - -C web-app . | tar -xpf - -C /opt/sunspec/device-webprobe/web-app"
 sudo tar -cf - -C web-app . | tar -xpf - -C /opt/sunspec/device-webprobe/web-app
 echo
+echo copy sunspec_device-webprobe to /etc/init.d using scp...
+echo
 echo
 echo "sudo /etc/init.d/sunspec_device-webprobe start"
 sudo /etc/init.d/sunspec_device-webprobe start
