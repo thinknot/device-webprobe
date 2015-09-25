@@ -1,0 +1,33 @@
+# chkconfig: 3 99 1
+# description: SunSpec Device webprobe
+
+case "$1" in
+'start')
+pushd /opt/sunspec/device-webprobe/modsim
+nohup python modsim.py -m tcp mbmap_test_device.xml &
+popd
+pushd /opt/sunspec/device-webprobe/service
+cherryd -c suns_device_service.config -i suns_device_service -d
+popd
+pushd /opt/sunspec/device-webprobe
+mkdir results
+popd
+pushd /opt/sunspec/device-webprobe/web-app
+nohup node server.js > /var/log/sunspec_device-webprobe/web-app.log 2>&1 &
+popd
+;;
+
+'stop')
+echo 'not implemented'
+;;
+
+'restart')
+echo 'not implemented'
+;;
+
+'status')
+ps aux | grep "node server"
+ps aux | grep cherryd | grep suns_device_service
+ps aux | grep modsim
+
+esac
