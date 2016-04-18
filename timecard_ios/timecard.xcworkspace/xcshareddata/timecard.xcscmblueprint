@@ -1,0 +1,37 @@
+{
+  "DVTSourceControlWorkspaceBlueprintPrimaryRemoteRepositoryKey" : "9F7714242FB424A50B6B3CA315EAD89D55B1BF49",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyRepositoryLocationsKey" : {
+
+  },
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
+    "9F7714242FB424A50B6B3CA315EAD89D55B1BF49" : 0,
+    "9D01D5BCCDE322646FEB1945347C3CF4E96976E3" : 0,
+    "D58DF7C3E72198199D1B65DDDAADD2A7790F9A98" : 0
+  },
+  "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "AFAC0231-FAEA-40DE-A45E-3A87FCDB9CCA",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
+    "9F7714242FB424A50B6B3CA315EAD89D55B1BF49" : "GitHub\/",
+    "9D01D5BCCDE322646FEB1945347C3CF4E96976E3" : "GitHub\/google-api-objectivec-client\/Deps\/gtm-oauth2\/",
+    "D58DF7C3E72198199D1B65DDDAADD2A7790F9A98" : "GitHub\/google-api-objectivec-client\/"
+  },
+  "DVTSourceControlWorkspaceBlueprintNameKey" : "timecard",
+  "DVTSourceControlWorkspaceBlueprintVersion" : 204,
+  "DVTSourceControlWorkspaceBlueprintRelativePathToProjectKey" : "timecard_ios\/timecard.xcworkspace",
+  "DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey" : [
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/google\/gtm-oauth2.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "9D01D5BCCDE322646FEB1945347C3CF4E96976E3"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/dougbergh\/interop-test.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "9F7714242FB424A50B6B3CA315EAD89D55B1BF49"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/google\/google-api-objectivec-client.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "D58DF7C3E72198199D1B65DDDAADD2A7790F9A98"
+    }
+  ]
+}

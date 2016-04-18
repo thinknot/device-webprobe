@@ -4,5 +4,5 @@
 
 //#import "GTL.framework/Headers/GTLService.h"
 //#import "GTL.framework/Headers/GTMOAuth2ViewControllerTouch.h"
-#import "GTL/GTMOAuth2ViewControllerTouch.h"
+#import "GTMOAuth2ViewControllerTouch.h"
 #import "GTLDrive.h"
