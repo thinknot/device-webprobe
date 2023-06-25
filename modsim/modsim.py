@@ -4,7 +4,9 @@ import sys
 import struct
 import socket
 import serial
-import modbus_tk
+from math import trunc
+from modbus_tk.modbus import Slave
+import modbus_tk.utils
 import modbus_tk.modbus_tcp as modbus_tcp
 import modbus_tk.modbus_rtu as modbus_rtu
 from modbus_tk.simulator import *
@@ -37,7 +39,7 @@ class ModSimDatabank(modbus_tk.modbus.Databank):
                 #make the full response
                 response = query.build_response(response_pdu)
                 return response
-        except Exception, excpt:
+        except Exception as excpt:
             modbus_tk.hooks.call_hooks("modbus.Databank.on_error", (self, excpt, request_pdu))
             LOGGER.error("handle request failed: " + str(excpt))
         except:
@@ -59,12 +61,12 @@ class ModSimRtuServer(modbus_rtu.RtuServer):
         modbus_tk.modbus.Server.__init__(self, databank if databank else ModSimDatabank())
         self._serial = serial
         LOGGER.info("RtuServer alt %s is %s" % (self._serial.portstr, "opened" if self._serial.isOpen() else "closed"))
-        self._t0 = modbus_tk.modbus.utils.calculate_rtu_inter_char(self._serial.baudrate)
+        self._t0 = modbus_tk.utils.calculate_rtu_inter_char(self._serial.baudrate)
         self._serial.interCharTimeout = 1.5 * self._t0
         self._serial.timeout = 10 * self._t0
         # self._serial.interCharTimeout = .5
         # self._serial.timeout = .5
-        print 'to =', self._serial.interCharTimeout, self._serial.timeout
+        print('to =', self._serial.interCharTimeout, self._serial.timeout)
 
     def _handle(self, request):
         """handle a received sentence"""
@@ -107,7 +109,7 @@ class ModSim(Simulator):
             # timeout is too fast for 19200
             self.server._serial.timeout = self.server._serial.timeout * 1.5
         elif options.mode == 'tcp':
-            Simulator.__init__(self, modbus_tcp.TcpServer(address = '', port = options.port))
+            Simulator.__init__(self, modbus_tcp.TcpServer(address = options.hostname, port = options.port))
         else:
             raise ModSimError('Unknown mode: %s' % (options.mode))
 
@@ -125,11 +127,13 @@ if __name__ == "__main__":
                       default=9600,
                       help='Baud Rate [default: 9600]')
     parser.add_option('-m', '--mode',
-                      default='rtu',
-                      help='mode: rtu, tcp [default: rtu]')
+                      default='tcp',
+                      help='mode: rtu, tcp [default: tcp]')
     parser.add_option('-p', '--port', type='int',
                       default=502,
                       help='IP port [default: 502]')
+    parser.add_option('-t', '--hostname', default='127.0.0.1',
+                      help='IP hostname or address')
     parser.add_option('-i', '--id', type='int',
                       default=1,
                       help='slave id [default: 1]')
@@ -140,58 +144,60 @@ if __name__ == "__main__":
     options, args = parser.parse_args()
 
     if len(args) != 1:
-        print parser.print_help()
+        print(parser.print_help())
         sys.exit(1)
+
 
     modbus_map = mbmap.ModbusMap(options.id)
     try:
         map_name = args[0]
         ext = os.path.splitext(map_name)[1]
         modbus_map.from_xml(map_name)
-    except IOError, e:
-        print 'Error loading modbus map file - %s' % (str(e))
+    except IOError as e:
+        print('Error loading modbus map file - %s' % (str(e)))
         sys.exit(1)
 
     # create simulator
     try:
         sim = ModSim(options)
-    except ModSimError, e:
-        print 'Error initializing the simulator - %s' % (str(e))
+    except ModSimError as e:
+        print('Error initializing the simulator - %s' % (str(e)))
         sys.exit(1)
 
     if sim.mode == 'rtu':
         # extend serial timeouts, they seems to cause frequent crc errors
         sim.server._serial.interCharTimeout *= 2
         sim.server._serial.timeout *= 2
-        print 'Initialized modbus %s simulator: baud = %d  parity = %s  slave id = %s  base address = %s' % (options.mode,
-            sim.rtu.baudrate, sim.rtu.parity, str(options.id), str(modbus_map.base_addr))
+        print('Initialized modbus %s simulator: baud = %d  parity = %s  slave id = %s  base address = %s' % (options.mode,
+            sim.rtu.baudrate, sim.rtu.parity, str(options.id), str(modbus_map.base_addr)))
     elif sim.mode == 'tcp':
-        print 'Initialized modbus %s simulator: addr = %s  port = %s  slave id = %s  base address = %s' % (options.mode,
-            socket.gethostbyname(socket.gethostname()), options.port, str(options.id), str(modbus_map.base_addr))
+        print('Initialized modbus %s simulator: addr = %s  port = %s  slave id = %s  base address = %s' % (options.mode,
+            options.hostname, options.port, str(options.id), str(modbus_map.base_addr)))
     else:
-        print 'Initialized modbus simulator to unknown mode: %s' % (sim.mode)
+        print('Initialized modbus simulator to unknown mode: %s' % (sim.mode))
     
     # add modbus map to simulator slave device
-    print 'Modbus map loaded from %s' % args[0]
-    slave = sim.server.add_slave(options.id)
+    print('Modbus map loaded from %s' % args[0])
+    slave: Slave = sim.server.add_slave(options.id)
     for regs in modbus_map.regs:
-        slave.add_block('regs_' + str(regs.offset), modbus_map.func, (modbus_map.base_addr + regs.offset), regs.count)
+        size = trunc(regs.count)
+        slave.add_block('regs_' + str(regs.offset), modbus_map.func, (modbus_map.base_addr + regs.offset), size)
     for regs in modbus_map.regs:
         values = []
-        for i in xrange(0, regs.count):
+        for i in  range(0, size):
             index = i * 2
             v = struct.unpack('>H', regs.data[index:(index + 2)])
             values.append(v[0])
         # print values
         slave.set_values('regs_' + str(regs.offset), (modbus_map.base_addr + regs.offset), values)
-        print 'Added modbus map block:  address = %d  count = %d' % ((modbus_map.base_addr + regs.offset), regs.count)
+        print('Added modbus map block:  address = %d  count = %d' % ((modbus_map.base_addr + regs.offset), size))
 
     try:
         LOGGER.info("'quit' for closing the simulator")
         sim.start()
         
-    except Exception, e:
-        print e
+    except Exception as e:
+        print(e)
             
     finally:
         sim.close()
